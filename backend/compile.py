@@ -1,5 +1,7 @@
+import asyncio
 import pandas as pd
 import requests
+from time import time
 
 from jb2 import JB2_API, get_auth_token, paginator
 
@@ -17,6 +19,11 @@ QUALIFIERS = "?status=Open"
 FIELDS = "&fields=jobNumber,user_Text2,jobOnHold,priority,productCode,unitPrice,miscDescription,totalEstimatedHours,quantityOrdered,quantityToStock"
 ORDER_DET_URL = JB2_API + "order-line-items" + QUALIFIERS + FIELDS
 
+QUALIFIERS = "?user_Text2[in]=kbn|customer"
+FIELDS = "&fields=partNumber,user_Text2,user_Number1,user_Number2"
+ESTIMATES_URL = JB2_API + "estimates" + QUALIFIERS + FIELDS
+
+
 class CTL:
     def __init__(self):
         self.__session = requests.Session()
@@ -25,16 +32,32 @@ class CTL:
         self.__auth_token = get_auth_token(self.__session)
         self.__session.headers.update({"Authorization": f"Bearer {self.__auth_token}"})
 
+        start = time()
         print("Started table fetch")
 
         # Get all tables
-        self._releases = paginator(self.__session, RELEASES_URL)
-        self.__orders = paginator(self.__session, ORDERS_URL)
-        self.__order_det = paginator(self.__session, ORDER_DET_URL)
+        self._releases = pd.DataFrame.from_records(paginator(self.__session, RELEASES_URL))
+        self._orders = pd.DataFrame.from_records(paginator(self.__session, ORDERS_URL))
+        self._order_det = pd.DataFrame.from_records(paginator(self.__session, ORDER_DET_URL))
+        self._estimates = pd.DataFrame.from_records(paginator(self.__session, ESTIMATES_URL))
 
-        print("Finished table fetch")
+        # Create Kanban table from releases and estimates
+
+
+        # Merge tables
+        self._releases = self._releases.merge(self._orders,
+                                                how="left",
+                                                on="orderNumber")
+        self._releases = self._releases.merge(self._order_det,
+                                                how="left",
+                                                on="jobNumber")
+        self._releases = self._releases.merge(self._estimates,
+                                                how="left",
+                                                on="partNumber")
+
+        print("Finished table fetch:", time()-start)
 
 
     @property
     def table(self):
-        return self._releases
+        return self._releases.to_json(orient='records')

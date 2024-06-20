@@ -14,7 +14,7 @@ app = Flask(
 def trending():
     ctl = CTL()
 
-    return {"table": ctl.table}
+    return ctl.table
 
 # Passes web requests on to ReactJS build
 @app.errorhandler(404)

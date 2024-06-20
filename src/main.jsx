@@ -10,13 +10,14 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 const GridExample = () => {
   const [rowData, setRowData] = useState();
   const [colDefs, setColDefs] = useState([
-    { field: "orderNumber" },
     { field: "jobNumber" },
+    { field: "orderNumber" },
     { field: "partNumber" },
     { field: "partDescription" },
     { field: "quantity" },
     { field: "dueDate" },
     { field: "comments" },
+    { field: "customerCode" },
   ]);
   const defaultColDef = useMemo(() => {
     return {
@@ -49,7 +50,7 @@ const GridExample = () => {
       .then((res) => res.json())
       .then((json) => {
         console.log(json);
-        setRowData(json.table);
+        setRowData(json);
       });
   }, []);
 
