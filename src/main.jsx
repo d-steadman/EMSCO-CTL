@@ -10,10 +10,13 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 const GridExample = () => {
   const [rowData, setRowData] = useState();
   const [colDefs, setColDefs] = useState([
-    { field: "make", editable: true },
-    { field: "model" },
-    { field: "price" },
-    { field: "electric" },
+    { field: "orderNumber" },
+    { field: "jobNumber" },
+    { field: "partNumber" },
+    { field: "partDescription" },
+    { field: "quantity" },
+    { field: "dueDate" },
+    { field: "comments" },
   ]);
   const defaultColDef = useMemo(() => {
     return {
@@ -66,9 +69,5 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById("root"));
-root.render(
-  <StrictMode>
-    <GridExample />
-  </StrictMode>,
-);
+root.render(<GridExample />);
 window.tearDownExample = () => root.unmount();

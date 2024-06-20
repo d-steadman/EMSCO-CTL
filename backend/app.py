@@ -1,4 +1,7 @@
 from flask import Flask, render_template
+import requests
+
+from compile import CTL
 
 app = Flask(
     __name__,
@@ -9,16 +12,9 @@ app = Flask(
 
 @app.route("/api/table")
 def trending():
-    return {
-        "table": [
-            { "make": "Tesla", "model": "Model Y", "price": 64950, "electric": True },
-            { "make": "Ford", "model": "F-Series", "price": 33850, "electric": False },
-            { "make": "Toyota", "model": "Corolla", "price": 29600, "electric": False },
-            { "make": "Mercedes", "model": "EQA", "price": 48890, "electric": True },
-            { "make": "Fiat", "model": "500", "price": 15774, "electric": False },
-            { "make": "Nissan", "model": "Juke", "price": 20675, "electric": False },
-        ]
-    }
+    ctl = CTL()
+
+    return {"table": ctl.table}
 
 # Passes web requests on to ReactJS build
 @app.errorhandler(404)
