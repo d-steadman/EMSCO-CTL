@@ -1,47 +1,74 @@
-import React, { useState } from "react";
+"use strict";
+
+import React, { useEffect, useMemo, useState, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { AgGridReact } from "ag-grid-react"; // React Grid Logic
-import "ag-grid-community/styles/ag-grid.css"; // Core CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-charts-enterprise";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
-import "./output.css";
-
-// Create new GridExample component
-export default function App() {
-  // Row Data: The data to be displayed.
-  const [rowData, setRowData] = useState([
-    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-    { make: "Ford", model: "F-Series", price: 33850, electric: false },
-    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    { make: "Mercedes", model: "EQA", price: 48890, electric: true },
-    { make: "Fiat", model: "500", price: 15774, electric: false },
-    { make: "Nissan", model: "Juke", price: 20675, electric: false },
-  ]);
-
-  // Column Definitions: Defines & controls grid columns.
+const GridExample = () => {
+  const [rowData, setRowData] = useState();
   const [colDefs, setColDefs] = useState([
     { field: "make", editable: true },
     { field: "model" },
     { field: "price" },
     { field: "electric" },
   ]);
+  const defaultColDef = useMemo(() => {
+    return {
+      flex: 1,
+      enableValue: true,
+    };
+  }, []);
+  const sideBar = useMemo(() => {
+    return {
+      toolPanels: [
+        {
+          id: "columns",
+          labelDefault: "Columns",
+          labelKey: "columns",
+          iconKey: "columns",
+          toolPanel: "agColumnsToolPanel",
+          toolPanelParams: {
+            suppressRowGroups: true,
+            suppressValues: true,
+            suppressPivots: true,
+            suppressPivotMode: true,
+            contractColumnSelection: true,
+          },
+        },
+      ],
+    };
+  }, []);
+  const onGridReady = useEffect(() => {
+    fetch("/api/table")
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+        setRowData(json.table);
+      });
+  }, []);
 
-  const defaultColDef = {
-    flex: 1,
-  };
-
-  // Container: Defines the grid's theme & dimensions.
   return (
-    <div className="ag-theme-quartz-dark">
+    <div className={"ag-theme-quartz-dark"}>
       <AgGridReact
         rowData={rowData}
         columnDefs={colDefs}
         defaultColDef={defaultColDef}
+        sideBar={sideBar}
+        rowGroupPanelShow={"never"}
+        pivotPanelShow={"never"}
+        onGridReady={onGridReady}
       />
     </div>
   );
-}
+};
 
-// Render GridExample
 const root = createRoot(document.getElementById("root"));
-root.render(<App />);
+root.render(
+  <StrictMode>
+    <GridExample />
+  </StrictMode>,
+);
+window.tearDownExample = () => root.unmount();

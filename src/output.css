@@ -558,14 +558,10 @@ video {
   display: flex;
 }
 
+.table {
+  display: table;
+}
+
 .grid {
   display: grid;
-}
-
-.min-h-full {
-  min-height: 100%;
-}
-
-.min-w-full {
-  min-width: 100%;
 }

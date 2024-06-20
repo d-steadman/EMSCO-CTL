@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite & npx tailwindcss -i ./src/input.css -o ./src/output.css --watch",
+    "dev": "vite & npx tailwindcss -i ./src/input.css -o ./src/output.css --watch & flask --app backend/app.py --debug run",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -14,9 +14,9 @@
     "@ag-grid-community/core": "^31.3.2",
     "@ag-grid-community/react": "^31.3.2",
     "@ag-grid-community/styles": "^31.3.2",
+    "ag-grid-charts-enterprise": "^31.3.2",
     "ag-grid-community": "^31.3.2",
     "ag-grid-react": "^31.3.2",
-    "danfojs": "^1.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
