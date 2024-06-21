@@ -18,7 +18,7 @@ export default function App() {
     <div className="h-screen flex flex-col justify-between">
       <Header />
 
-      <div className="ag-theme-custom h-full">
+      <div className="ag-theme-custom tracking-tighter h-full">
         <CTL gridRef={gridRef} />
       </div>
 

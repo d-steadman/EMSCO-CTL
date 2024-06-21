@@ -17,14 +17,14 @@ function CTL({ gridRef }) {
       field: "priority",
       headerName: "Priority",
       hide: true,
-      editable: true,
       sortIndex: 1,
       sort: "asc",
     },
+    { field: "PONumber", headerName: "PO #", hide: true, width: 100 },
     {
       field: "jobNumber",
       headerName: "Job #",
-      width: 100,
+      width: 95,
       filter: "agSetColumnFilter",
     },
     {
@@ -42,15 +42,20 @@ function CTL({ gridRef }) {
     {
       field: "partDescription",
       headerName: "Part Desc.",
-      width: 560,
+      width: 535,
       filter: "agSetColumnFilter",
     },
-    { field: "quantity", headerName: "Qty", width: 60 },
+    {
+      field: "quantity",
+      headerName: "Qty",
+      cellClass: "text-right",
+      width: 60,
+    },
     {
       field: "dueDate",
       cellDataType: "date",
       headerName: "Due Date",
-      width: 115,
+      width: 105,
       valueGetter: (row) => parseISO(row.data.dueDate),
       valueFormatter: (row) => {
         return format(row.value, "MM-dd-yy");
@@ -67,13 +72,13 @@ function CTL({ gridRef }) {
     {
       field: "customerCode",
       headerName: "Cust. Code",
-      width: 135,
+      width: 125,
       filter: "agSetColumnFilter",
     },
     {
       field: "productCode",
       headerName: "Prod. Code",
-      width: 140,
+      width: 135,
       filter: "agSetColumnFilter",
     },
   ]);

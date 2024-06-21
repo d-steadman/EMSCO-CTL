@@ -41,9 +41,6 @@ class CTL:
         self._order_det = pd.DataFrame.from_records(paginator(self.__session, ORDER_DET_URL))
         self._estimates = pd.DataFrame.from_records(paginator(self.__session, ESTIMATES_URL))
 
-        # Create Kanban table from releases and estimates
-
-
         # Merge tables
         self._releases = self._releases.merge(self._orders,
                                                 how="left",
@@ -51,9 +48,21 @@ class CTL:
         self._releases = self._releases.merge(self._order_det,
                                                 how="left",
                                                 on="jobNumber")
-        self._releases = self._releases.merge(self._estimates,
-                                                how="left",
-                                                on="partNumber")
+
+        # Now that we have Kanban info, create Kanban table
+        idx_kanban_stock = self._releases["comments"].str.contains("KANBAN", na=False) & \
+                          ~self._releases["comments"].str.contains("LPRD", na=False)
+        kanban_stock = self._releases[idx_kanban_stock]
+
+        # Sum part Qty's grouped by part number with "KANBAN" comment
+        kanban_stock = kanban_stock[["partNumber", "quantity"]].groupby("partNumber").sum()
+
+        idx_kanban_order = (self._releases["user_Text2"] == "customer") | \
+                           (self._releases["user_Text2"] == "kbn")
+        kanban_order = self._releases[idx_kanban_order]
+
+        # Sum part Qty's grouped by part number with "customer" or "kbn" order entry type
+        kanban_order = kanban_order[["partNumber", "quantity"]].groupby("partNumber").sum()
 
         print("Finished table fetch:", time()-start)
 
