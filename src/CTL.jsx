@@ -37,6 +37,8 @@ export default function CTL() {
   }, []);
 
   const rowClassRules = {
+    "bg-on-hold": (params) => params.data.jobOnHold,
+
     "bg-hot": (params) => {
       return params.data.priority == 10;
     },
@@ -49,7 +51,25 @@ export default function CTL() {
     "bg-standard": (params) => {
       return params.data.priority == 40;
     },
-    "bg-on-hold": (params) => params.data.jobOnHold,
+  };
+
+  const getRowClass = (params) => {
+    if (params.data.jobOnHold) {
+      return "bg-on-hold";
+    }
+
+    switch (params.data.priority) {
+      case 10:
+        return "bg-hot";
+      case 20:
+        return "bg-next";
+      case 30:
+        return "bg-firm";
+      case 40:
+        return "bg-standard";
+      default:
+        return "";
+    }
   };
 
   const sideBar = useMemo(() => {
@@ -84,7 +104,7 @@ export default function CTL() {
   return (
     <AgGridReact
       rowData={rowData}
-      rowClassRules={rowClassRules}
+      getRowClass={getRowClass}
       rowHeight={30}
       columnDefs={colDefs}
       defaultColDef={defaultColDef}
