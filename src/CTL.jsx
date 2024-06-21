@@ -1,56 +1,109 @@
 "use strict";
 
-import { format } from "date-fns";
-import React, { useEffect, useMemo, useState, StrictMode } from "react";
+import { format, parseISO } from "date-fns";
+import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-charts-enterprise";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+//import "ag-grid-community/styles/ag-grid.css";
+//import "ag-grid-community/styles/ag-theme-quartz.css";
 
+import "./ag-grid-theme-custom.css";
 import "./output.css"; // Tailwind output
 
-export default function CTL() {
+function CTL({ gridRef }) {
   const [rowData, setRowData] = useState();
   const [colDefs, setColDefs] = useState([
-    { field: "jobNumber", headerName: "Job #", width: 110 },
-    { field: "orderNumber", headerName: "Order #", hide: true },
-    { field: "partNumber", headerName: "Part #", hide: true },
-    { field: "partDescription", headerName: "Part Desc." },
-    { field: "quantity", headerName: "Qty" },
+    {
+      field: "priority",
+      headerName: "Priority",
+      hide: true,
+      editable: true,
+      sortIndex: 1,
+      sort: "asc",
+    },
+    {
+      field: "jobNumber",
+      headerName: "Job #",
+      width: 100,
+      filter: "agSetColumnFilter",
+    },
+    {
+      field: "orderNumber",
+      headerName: "Order #",
+      hide: true,
+      filter: "agSetColumnFilter",
+    },
+    {
+      field: "partNumber",
+      headerName: "Part #",
+      hide: true,
+      filter: "agSetColumnFilter",
+    },
+    {
+      field: "partDescription",
+      headerName: "Part Desc.",
+      width: 560,
+      filter: "agSetColumnFilter",
+    },
+    { field: "quantity", headerName: "Qty", width: 60 },
     {
       field: "dueDate",
+      cellDataType: "date",
       headerName: "Due Date",
-      valueGetter: (row) => format(row.data.dueDate, "MM/dd/yyyy"),
+      width: 115,
+      valueGetter: (row) => parseISO(row.data.dueDate),
+      valueFormatter: (row) => {
+        return format(row.value, "MM-dd-yy");
+      },
+      sortIndex: 0,
+      sort: "asc",
     },
-    { field: "comments", headerName: "Comments" },
-    { field: "customerCode", headerName: "Cust. Code" },
+    {
+      field: "comments",
+      headerName: "Comments",
+      width: 150,
+      filter: "agSetColumnFilter",
+    },
+    {
+      field: "customerCode",
+      headerName: "Cust. Code",
+      width: 135,
+      filter: "agSetColumnFilter",
+    },
     {
       field: "productCode",
       headerName: "Prod. Code",
+      width: 140,
       filter: "agSetColumnFilter",
     },
   ]);
+
   const defaultColDef = useMemo(() => {
     return {
+      menuTabs: ["filterMenuTab"],
       enableValue: true,
     };
   }, []);
 
-  const rowClassRules = {
-    "bg-on-hold": (params) => params.data.jobOnHold,
+  const postSortRows = (params) => {
+    let rowNodes = params.nodes;
+    // Put 20 on top
+    let nextInsertPos = 0;
+    for (let i = 0; i < rowNodes.length; i++) {
+      if (rowNodes[i].data.priority === 20) {
+        rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+        nextInsertPos++;
+      }
+    }
 
-    "bg-hot": (params) => {
-      return params.data.priority == 10;
-    },
-    "bg-next": (params) => {
-      return params.data.priority == 20;
-    },
-    "bg-firm": (params) => {
-      return params.data.priority == 30;
-    },
-    "bg-standard": (params) => {
-      return params.data.priority == 40;
-    },
+    // Put 10 on top, so it's placed above 20
+    nextInsertPos = 0;
+    for (let i = 0; i < rowNodes.length; i++) {
+      if (rowNodes[i].data.priority === 10) {
+        rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+        nextInsertPos++;
+      }
+    }
   };
 
   const getRowClass = (params) => {
@@ -96,14 +149,15 @@ export default function CTL() {
     fetch("/api/table")
       .then((res) => res.json())
       .then((json) => {
-        console.log(json);
         setRowData(json);
       });
   }, []);
 
   return (
     <AgGridReact
+      ref={gridRef}
       rowData={rowData}
+      postSortRows={postSortRows}
       getRowClass={getRowClass}
       rowHeight={30}
       columnDefs={colDefs}
@@ -115,3 +169,5 @@ export default function CTL() {
     />
   );
 }
+
+export default CTL;
