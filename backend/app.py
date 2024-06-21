@@ -13,6 +13,7 @@ app = Flask(
 @app.route("/api/table")
 def trending():
     ctl = CTL()
+    ctl._releases.to_csv("test.csv")
 
     return ctl.table
 

@@ -1,74 +1,32 @@
 "use strict";
 
-import React, { useEffect, useMemo, useState, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-charts-enterprise";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
-const GridExample = () => {
-  const [rowData, setRowData] = useState();
-  const [colDefs, setColDefs] = useState([
-    { field: "jobNumber" },
-    { field: "orderNumber" },
-    { field: "partNumber" },
-    { field: "partDescription" },
-    { field: "quantity" },
-    { field: "dueDate" },
-    { field: "comments" },
-    { field: "customerCode" },
-  ]);
-  const defaultColDef = useMemo(() => {
-    return {
-      flex: 1,
-      enableValue: true,
-    };
-  }, []);
-  const sideBar = useMemo(() => {
-    return {
-      toolPanels: [
-        {
-          id: "columns",
-          labelDefault: "Columns",
-          labelKey: "columns",
-          iconKey: "columns",
-          toolPanel: "agColumnsToolPanel",
-          toolPanelParams: {
-            suppressRowGroups: true,
-            suppressValues: true,
-            suppressPivots: true,
-            suppressPivotMode: true,
-            contractColumnSelection: true,
-          },
-        },
-      ],
-    };
-  }, []);
-  const onGridReady = useEffect(() => {
-    fetch("/api/table")
-      .then((res) => res.json())
-      .then((json) => {
-        console.log(json);
-        setRowData(json);
-      });
-  }, []);
+import CTL from "./CTL";
+import "./output.css"; // Tailwind output
 
+export default function App() {
   return (
-    <div className={"ag-theme-quartz-dark"}>
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={colDefs}
-        defaultColDef={defaultColDef}
-        sideBar={sideBar}
-        rowGroupPanelShow={"never"}
-        pivotPanelShow={"never"}
-        onGridReady={onGridReady}
-      />
+    <div className="h-screen flex flex-col justify-between">
+      <div className="py-6 text-center text-6xl font-black">
+        <h1>Cycle Time List</h1>
+      </div>
+
+      <div className="ag-theme-quartz flex-grow overflow-hidden">
+        <CTL />
+      </div>
+
+      <div class="flex flex-row py-2 ">
+        <button>Testing</button>
+        <button>Hello</button>
+        <button>World</button>
+      </div>
     </div>
   );
-};
+}
 
 const root = createRoot(document.getElementById("root"));
-root.render(<GridExample />);
+root.render(<App />);
 window.tearDownExample = () => root.unmount();

@@ -558,10 +558,77 @@ video {
   display: flex;
 }
 
-.table {
-  display: table;
+.h-screen {
+  height: 100vh;
 }
 
-.grid {
-  display: grid;
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.bg-firm {
+  --tw-bg-opacity: 1;
+  background-color: rgb(189 227 140 / var(--tw-bg-opacity));
+}
+
+.bg-hot {
+  --tw-bg-opacity: 1;
+  background-color: rgb(251 147 226 / var(--tw-bg-opacity));
+}
+
+.bg-next {
+  --tw-bg-opacity: 1;
+  background-color: rgb(179 231 245 / var(--tw-bg-opacity));
+}
+
+.bg-on-hold {
+  background-color: 605754;
+}
+
+.bg-standard {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 220 205 / var(--tw-bg-opacity));
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
+}
+
+.font-black {
+  font-weight: 900;
+}
+
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
