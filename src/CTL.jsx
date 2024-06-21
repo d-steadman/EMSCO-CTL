@@ -62,7 +62,7 @@ function CTL({ gridRef }) {
       field: "comments",
       headerName: "Comments",
       width: 150,
-      filter: "agSetColumnFilter",
+      filter: "agTextColumnFilter",
     },
     {
       field: "customerCode",
