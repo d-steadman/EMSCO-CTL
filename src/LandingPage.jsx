@@ -60,6 +60,7 @@ function Header() {
 function Footer({ gridRef }) {
   // Filtering states for "page" buttons
   const onKanbanComplete = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel({
       comments: {
         filterType: "text",
@@ -81,40 +82,49 @@ function Footer({ gridRef }) {
   }, []);
 
   const onALL = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(null); // Clear all filters
   }, []);
 
   const onHarness = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(
       notCompleted(["PROD-HNS-STD", "PROD-HNS-TNY", "PROD-MULTI"]),
     );
   }, []);
 
   const onPCBBOX = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(notCompleted(["PROD-PCB", "PROD-BOX"]));
   }, []);
 
   const onWeatherproof1 = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(notCompleted(["PROD-HNS-W1"]));
   }, []);
 
   const onWeatherproof2 = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(notCompleted(["PROD-HNS-W2"]));
   }, []);
 
   const onWeatherproof3 = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(notCompleted(["PROD-HNS-W3"]));
   }, []);
 
   const onPower = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(notCompleted(["PROD-POWER"]));
   }, []);
 
   const onOngoing1 = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(notCompleted(["PROD-ONG-1"]));
   }, []);
 
   const onEngineering = useCallback(() => {
+    gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(notCompleted(["SERVICE"]));
   }, []);
 

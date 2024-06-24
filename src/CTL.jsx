@@ -8,11 +8,9 @@ import {
   parseISO,
   startOfDay,
 } from "date-fns";
-import React, { forwardRef, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-charts-enterprise";
-//import "ag-grid-community/styles/ag-grid.css";
-//import "ag-grid-community/styles/ag-theme-quartz.css";
 
 import "./ag-grid-theme-custom.css";
 import "./output.css"; // Tailwind output
