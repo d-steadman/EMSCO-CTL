@@ -1,5 +1,6 @@
 import asyncio
 import pandas as pd
+import numpy as np
 import requests
 from time import time
 
@@ -20,7 +21,7 @@ FIELDS = "&fields=jobNumber,user_Text2,jobOnHold,priority,productCode,unitPrice,
 ORDER_DET_URL = JB2_API + "order-line-items" + QUALIFIERS + FIELDS
 
 QUALIFIERS = "?user_Text2[in]=kbn|customer"
-FIELDS = "&fields=partNumber,user_Text2,user_Number1,user_Number2"
+FIELDS = "&fields=partNumber,user_Number1,user_Number2"
 ESTIMATES_URL = JB2_API + "estimates" + QUALIFIERS + FIELDS
 
 
@@ -31,9 +32,6 @@ class CTL:
         # Get & set authentication headers
         self.__auth_token = get_auth_token(self.__session)
         self.__session.headers.update({"Authorization": f"Bearer {self.__auth_token}"})
-
-        start = time()
-        print("Started table fetch")
 
         # Get all tables
         self._releases = pd.DataFrame.from_records(paginator(self.__session, RELEASES_URL))
@@ -49,24 +47,49 @@ class CTL:
                                                 how="left",
                                                 on="jobNumber")
 
-        # Now that we have Kanban info, create Kanban table
+        # Sum part Qty's grouped by part number with "KANBAN" comment
         idx_kanban_stock = self._releases["comments"].str.contains("KANBAN", na=False) & \
                           ~self._releases["comments"].str.contains("LPRD", na=False)
         kanban_stock = self._releases[idx_kanban_stock]
 
-        # Sum part Qty's grouped by part number with "KANBAN" comment
         kanban_stock = kanban_stock[["partNumber", "quantity"]].groupby("partNumber").sum()
+        kanban_stock.rename(columns={"quantity": "kanban_stock"}, inplace=True)
 
+        # Sum part Qty's grouped by part number with "customer" or "kbn" order entry type
         idx_kanban_order = (self._releases["user_Text2"] == "customer") | \
                            (self._releases["user_Text2"] == "kbn")
         kanban_order = self._releases[idx_kanban_order]
 
-        # Sum part Qty's grouped by part number with "customer" or "kbn" order entry type
         kanban_order = kanban_order[["partNumber", "quantity"]].groupby("partNumber").sum()
+        kanban_order.rename(columns={"quantity": "order_qty"}, inplace=True)
 
-        print("Finished table fetch:", time()-start)
+        # Merge columns to create Kanban list
+        self._estimates = self._estimates.merge(kanban_stock,
+                                                how="left",
+                                                on="partNumber")
+        self._estimates = self._estimates.merge(kanban_order,
+                                                how="left",
+                                                on="partNumber")
+        self._estimates.fillna(0, inplace=True)
 
+        # Add "Weeks Left" column
+        self._estimates["weeks_left"] = self._estimates["order_qty"] / self._estimates["user_Number1"] * 4
+
+        # Fix divide by zero errors
+        self._estimates.replace([np.inf, -np.inf], "No Usage", inplace=True)
+        self._estimates.fillna("No Usage", inplace=True)
+
+        # Merge weeks left onto releases
+        self._releases = self._releases.merge(self._estimates[["partNumber", "weeks_left"]],
+                                              how="left",
+                                              on="partNumber")
 
     @property
-    def table(self):
-        return self._releases.to_json(orient='records')
+    def ctl(self):
+        return self._releases.to_json(orient="records")
+
+    @property
+    def official_kanban(self):
+        print(self._estimates)
+
+        return self._estimates.to_json(orient="records")

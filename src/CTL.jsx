@@ -1,6 +1,13 @@
 "use strict";
 
-import { format, parseISO } from "date-fns";
+import {
+  addDays,
+  subDays,
+  addWeeks,
+  format,
+  parseISO,
+  startOfDay,
+} from "date-fns";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-charts-enterprise";
@@ -40,6 +47,14 @@ function CTL({ gridRef }) {
       filter: "agSetColumnFilter",
     },
     {
+      field: "customerCode",
+      headerName: "Cust. Code",
+      width: 125,
+      filter: "agSetColumnFilter",
+      sortIndex: 2,
+      sort: "asc",
+    },
+    {
       field: "partDescription",
       headerName: "Part Desc.",
       width: 535,
@@ -55,13 +70,55 @@ function CTL({ gridRef }) {
       field: "dueDate",
       cellDataType: "date",
       headerName: "Due Date",
+      hide: true,
       width: 105,
       valueGetter: (row) => parseISO(row.data.dueDate),
       valueFormatter: (row) => {
         return format(row.value, "MM-dd-yy");
       },
+    },
+    {
+      cellDataType: "date",
+      headerName: "Effective Date",
+      width: 90,
+      valueGetter: (row) => {
+        let date = parseISO(row.data.dueDate);
+
+        if (typeof row.data.weeks_left === "number") {
+          date = addWeeks(new Date(), row.data.weeks_left);
+        }
+
+        date = startOfDay(date);
+
+        switch (row.data.priority) {
+          case 30:
+            return subDays(date, 2);
+
+          case 50:
+            return addDays(date, 10);
+
+          default:
+            return date;
+        }
+      },
+      valueFormatter: (row) => {
+        return format(row.value, "MM-dd-yy");
+      },
       sortIndex: 0,
       sort: "asc",
+    },
+    {
+      field: "weeks_left",
+      headerName: "Weeks",
+      width: 90,
+      valueFormatter: (row) => {
+        // Don't attempt to round string values
+        if (typeof row.value === "number") {
+          return row.value.toFixed(1);
+        }
+
+        return row.value;
+      },
     },
     {
       field: "comments",
@@ -70,10 +127,26 @@ function CTL({ gridRef }) {
       filter: "agTextColumnFilter",
     },
     {
-      field: "customerCode",
-      headerName: "Cust. Code",
-      width: 125,
+      field: "miscDescription",
+      headerName: "Misc. Desc.",
+      width: 75,
       filter: "agSetColumnFilter",
+    },
+    {
+      headerName: "Est. Hrs.",
+      width: 65,
+      valueGetter: (row) => {
+        return (
+          row.data.totalEstimatedHours *
+          (row.data.quantity /
+            (row.data.quantityOrdered + row.data.quantityToStock))
+        ).toFixed(1);
+      },
+    },
+    {
+      field: "location",
+      headerName: "Location",
+      width: 115,
     },
     {
       field: "productCode",
@@ -151,7 +224,7 @@ function CTL({ gridRef }) {
     };
   }, []);
   const onGridReady = useEffect(() => {
-    fetch("/api/table")
+    fetch("/api/ctl")
       .then((res) => res.json())
       .then((json) => {
         setRowData(json);

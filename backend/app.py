@@ -10,11 +10,17 @@ app = Flask(
     template_folder="../dist"
 )
 
-@app.route("/api/table")
-def trending():
+@app.route("/api/ctl")
+def ctl():
     ctl = CTL()
 
-    return ctl.table
+    return ctl.ctl
+
+@app.route("/api/official-kanban")
+def official_kanban():
+    ctl = CTL()
+
+    return ctl.official_kanban;
 
 # Passes web requests on to ReactJS build
 @app.errorhandler(404)

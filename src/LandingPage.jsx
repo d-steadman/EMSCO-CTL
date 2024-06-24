@@ -1,6 +1,13 @@
-import { forwardRef, useCallback } from "react";
+import { useCallback, useRef } from "react";
+import { Link } from "react-router-dom";
+
+import "./ag-grid-theme-custom.css";
+import CTL from "./CTL";
+import "./output.css"; // Tailwind output
 
 function notCompleted(prodCodes) {
+  /* Used to filter completed Kanban items out of CTL pages */
+
   return {
     comments: {
       filterType: "text",
@@ -24,6 +31,30 @@ function notCompleted(prodCodes) {
       values: prodCodes,
     },
   };
+}
+
+export default function LandingPage() {
+  const gridRef = useRef();
+
+  return (
+    <div className="h-screen flex flex-col justify-between">
+      <Header />
+
+      <div className="ag-theme-custom tracking-tighter h-full">
+        <CTL gridRef={gridRef} />
+      </div>
+
+      <Footer gridRef={gridRef} />
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <div className="py-4 text-center text-4xl font-black">
+      <h1>Cycle Time List</h1>
+    </div>
+  );
 }
 
 function Footer({ gridRef }) {
@@ -84,12 +115,14 @@ function Footer({ gridRef }) {
   }, []);
 
   const onEngineering = useCallback(() => {
-    gridRef.current.api.setFilterModel(["SERVICE"]);
+    gridRef.current.api.setFilterModel(notCompleted(["SERVICE"]));
   }, []);
 
   return (
-    <div class="flex flex-row py-2 space-x-2.5">
-      <button className="ml-4 btn bg-black text-white">Offical Kanban</button>
+    <div className="flex flex-row py-2 space-x-2.5">
+      <Link to="/official-kanban" className="ml-4 btn bg-black text-white">
+        Official Kanban
+      </Link>
       <button
         onClick={onKanbanComplete}
         className="btn bg-green-600 text-white"
@@ -126,5 +159,3 @@ function Footer({ gridRef }) {
     </div>
   );
 }
-
-export default Footer;

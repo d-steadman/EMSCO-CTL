@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite & npx tailwindcss -i ./src/input.css -o ./src/output.css --watch & flask --app backend/app.py --debug run",
-    "build": "vite build",
+    "build": "vite build && npx tailwindcss -i ./src/input.css -o ./src/output.css --minify",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -19,7 +19,8 @@
     "ag-grid-react": "^31.3.2",
     "date-fns": "^3.6.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
