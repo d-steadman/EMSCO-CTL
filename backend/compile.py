@@ -90,6 +90,8 @@ class CTL:
 
     @property
     def official_kanban(self):
-        print(self._estimates)
-
         return self._estimates.to_json(orient="records")
+
+    @property
+    def time_chart(self):
+        pass

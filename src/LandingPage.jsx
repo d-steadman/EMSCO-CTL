@@ -51,8 +51,19 @@ export default function LandingPage() {
 
 function Header() {
   return (
-    <div className="py-4 text-center text-4xl font-black">
-      <h1>Cycle Time List</h1>
+    <div className="py-4 flex justify-between items-center">
+      <div className="flex-1"></div>
+
+      <div className="shrink-0 justify-self-center text-center text-4xl font-black">
+        <h1>Cycle Time List</h1>
+      </div>
+
+      {/* Keeps title centered */}
+      <div className="flex justify-end flex-1 mr-4 self-center">
+        <Link to="/official-kanban" className="btn bg-black text-xl text-white">
+          Official Kanban &rsaquo;
+        </Link>
+      </div>
     </div>
   );
 }
@@ -130,9 +141,6 @@ function Footer({ gridRef }) {
 
   return (
     <div className="flex flex-row py-2 space-x-2.5">
-      <Link to="/official-kanban" className="ml-4 btn bg-black text-white">
-        Official Kanban
-      </Link>
       <button
         onClick={onKanbanComplete}
         className="btn bg-green-600 text-white"

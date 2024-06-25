@@ -12,7 +12,7 @@ import "./output.css"; // Tailwind output
 function Header() {
   return (
     <div className="py-4 flex justify-between items-center">
-      <div className="flex-1 ml-4 justify-self-start self-center">
+      <div className="flex-1 ml-4 self-center">
         <Link to="/" className="btn bg-black text-xl text-white">
           &lsaquo; Cycle Time List
         </Link>
