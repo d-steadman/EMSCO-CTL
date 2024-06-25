@@ -140,7 +140,7 @@ function Footer({ gridRef }) {
   }, []);
 
   return (
-    <div className="flex flex-row py-2 space-x-2.5">
+    <div className="flex flex-row px-4 py-2 space-x-2.5">
       <button
         onClick={onKanbanComplete}
         className="btn bg-green-600 text-white"
