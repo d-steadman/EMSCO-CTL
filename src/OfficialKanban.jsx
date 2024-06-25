@@ -65,6 +65,30 @@ export default function OfficialKanban() {
         },
       ],
     },
+    {
+      headerName: "Weeks till Leadtime",
+      valueGetter: (row) => {
+        if (typeof row.data.weeks_left === "string") {
+          return "N/A";
+        }
+
+        let weeks = row.data.weeks_left - 5;
+
+        return weeks <= 0 ? "Leadtime Now" : weeks;
+      },
+      valueFormatter: (row) => {
+        if (typeof row.value === "string") {
+          return row.value;
+        }
+
+        return row.value.toFixed(1);
+      },
+      cellClassRules: {
+        "bg-leadtime": (row) => {
+          return typeof row.value === "string" || row.value < 3;
+        },
+      },
+    },
   ]);
 
   const onGridReady = useEffect(() => {
