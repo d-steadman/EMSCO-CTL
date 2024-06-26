@@ -238,6 +238,7 @@ function CTL({ gridRef }) {
       rowHeight={30}
       columnDefs={colDefs}
       defaultColDef={defaultColDef}
+      enableRangeSelection={true}
       sideBar={sideBar}
       rowGroupPanelShow={"never"}
       pivotPanelShow={"never"}

@@ -83,6 +83,8 @@ class CTL:
         self._releases = self._releases.merge(self._estimates[["partNumber", "weeks_left"]],
                                               how="left",
                                               on="partNumber")
+        # Add "Effective Date" column
+        self._releases["effective_date"] = pd.to_datetime(self._releases["dueDate"])
 
     @property
     def ctl(self):
@@ -93,5 +95,5 @@ class CTL:
         return self._estimates.to_json(orient="records")
 
     @property
-    def time_chart(self):
-        pass
+    def weekly_hours(self):
+        weekly_hours = self._releases[["productCode", ]]
