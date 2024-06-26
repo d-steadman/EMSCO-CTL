@@ -84,7 +84,7 @@ class CTL:
                                               how="left",
                                               on="partNumber")
         # Add "Effective Date" column
-        self._releases["effective_date"] = pd.to_datetime(self._releases["dueDate"])
+        self._releases["effective_date"] = pd.to_datetime(self._releases["dueDate"], format="ISO8601")
 
     @property
     def ctl(self):
