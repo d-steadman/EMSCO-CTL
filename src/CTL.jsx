@@ -77,28 +77,9 @@ function CTL({ gridRef }) {
     },
     {
       cellDataType: "date",
+      field: "effective_date",
       headerName: "Effective Date",
       width: 90,
-      valueGetter: (row) => {
-        let date = parseISO(row.data.dueDate);
-
-        if (typeof row.data.weeks_left === "number") {
-          date = addWeeks(new Date(), row.data.weeks_left);
-        }
-
-        date = startOfDay(date);
-
-        switch (row.data.priority) {
-          case 30:
-            return subDays(date, 2);
-
-          case 50:
-            return addDays(date, 10);
-
-          default:
-            return date;
-        }
-      },
       valueFormatter: (row) => {
         return format(row.value, "MM-dd-yy");
       },

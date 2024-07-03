@@ -1,5 +1,7 @@
 import asyncio
+from datetime import datetime, timedelta
 import pandas as pd
+from pandas.api.types import is_number
 import numpy as np
 import requests
 from time import time
@@ -51,17 +53,21 @@ class CTL:
         idx_kanban_stock = self._releases["comments"].str.contains("KANBAN", na=False) & \
                           ~self._releases["comments"].str.contains("LPRD", na=False)
         kanban_stock = self._releases[idx_kanban_stock]
+        kanban_stock.to_csv("stock.csv")
 
         kanban_stock = kanban_stock[["partNumber", "quantity"]].groupby("partNumber").sum()
         kanban_stock.rename(columns={"quantity": "kanban_stock"}, inplace=True)
 
         # Sum part Qty's grouped by part number with "customer" or "kbn" order entry type
-        idx_kanban_order = (self._releases["user_Text2"] == "customer") | \
-                           (self._releases["user_Text2"] == "kbn")
+        idx_kanban_order = self._releases["user_Text2"].isin(["customer", "kbn"]) & \
+                         (~self._releases["comments"].str.contains("KANBAN", na=False) | \
+                           self._releases["comments"].str.contains("LPRD", na=False))
         kanban_order = self._releases[idx_kanban_order]
+        kanban_order.to_csv("order.csv")
 
         kanban_order = kanban_order[["partNumber", "quantity"]].groupby("partNumber").sum()
         kanban_order.rename(columns={"quantity": "order_qty"}, inplace=True)
+
 
         # Merge columns to create Kanban list
         self._estimates = self._estimates.merge(kanban_stock,
@@ -70,6 +76,7 @@ class CTL:
         self._estimates = self._estimates.merge(kanban_order,
                                                 how="left",
                                                 on="partNumber")
+
         self._estimates.fillna(0, inplace=True)
 
         # Add "Weeks Left" column
@@ -83,8 +90,9 @@ class CTL:
         self._releases = self._releases.merge(self._estimates[["partNumber", "weeks_left"]],
                                               how="left",
                                               on="partNumber")
+
         # Add "Effective Date" column
-        self._releases["effective_date"] = pd.to_datetime(self._releases["dueDate"], format="ISO8601")
+        self._releases["effective_date"] = self._releases.apply(self.__effective_date, axis=1)
 
     @property
     def ctl(self):
@@ -97,3 +105,19 @@ class CTL:
     @property
     def weekly_hours(self):
         weekly_hours = self._releases[["productCode", ]]
+
+    @staticmethod
+    def __effective_date(row):
+        if pd.notna(row["weeks_left"]) and is_number(row["weeks_left"]):
+            date = datetime.now() + timedelta(weeks=row["weeks_left"])
+
+        else:
+            date = datetime.fromisoformat(row["dueDate"])
+
+        if row["priority"] == 30:
+            date -= timedelta(days=2)
+
+        elif row["priority"] == 50:
+            date += timedelta(days=10)
+
+        return date
