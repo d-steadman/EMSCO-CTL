@@ -20,7 +20,13 @@ def ctl():
 def official_kanban():
     ctl = CTL()
 
-    return ctl.official_kanban;
+    return ctl.official_kanban
+
+@app.route("/api/weekly-hours")
+def weekly_hours():
+    ctl = CTL()
+
+    return ctl.weekly_hours
 
 # Passes web requests on to ReactJS build
 @app.errorhandler(404)

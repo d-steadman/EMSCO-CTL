@@ -112,15 +112,10 @@ function CTL({ gridRef }) {
       filter: "agSetColumnFilter",
     },
     {
+      field: "estimated_hours",
       headerName: "Est. Hrs.",
       width: 65,
-      valueGetter: (row) => {
-        return (
-          row.data.totalEstimatedHours *
-          (row.data.quantity /
-            (row.data.quantityOrdered + row.data.quantityToStock))
-        ).toFixed(1);
-      },
+      valueFormatter: (row) => row.value.toFixed(1),
     },
     {
       field: "location",

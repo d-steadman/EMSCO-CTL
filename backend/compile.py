@@ -53,7 +53,6 @@ class CTL:
         idx_kanban_stock = self._releases["comments"].str.contains("KANBAN", na=False) & \
                           ~self._releases["comments"].str.contains("LPRD", na=False)
         kanban_stock = self._releases[idx_kanban_stock]
-        kanban_stock.to_csv("stock.csv")
 
         kanban_stock = kanban_stock[["partNumber", "quantity"]].groupby("partNumber").sum()
         kanban_stock.rename(columns={"quantity": "kanban_stock"}, inplace=True)
@@ -63,7 +62,6 @@ class CTL:
                          (~self._releases["comments"].str.contains("KANBAN", na=False) | \
                            self._releases["comments"].str.contains("LPRD", na=False))
         kanban_order = self._releases[idx_kanban_order]
-        kanban_order.to_csv("order.csv")
 
         kanban_order = kanban_order[["partNumber", "quantity"]].groupby("partNumber").sum()
         kanban_order.rename(columns={"quantity": "order_qty"}, inplace=True)
@@ -94,6 +92,12 @@ class CTL:
         # Add "Effective Date" column
         self._releases["effective_date"] = self._releases.apply(self.__effective_date, axis=1)
 
+        # Add "Estimated Hours" column
+        self._releases["estimated_hours"] = self._releases["totalEstimatedHours"] * \
+                                           self._releases["quantity"] / \
+                                           (self._releases["quantityOrdered"] + \
+                                            self._releases["quantityToStock"])
+
     @property
     def ctl(self):
         return self._releases.to_json(orient="records")
@@ -104,7 +108,21 @@ class CTL:
 
     @property
     def weekly_hours(self):
-        weekly_hours = self._releases[["productCode", ]]
+        this_week = datetime.now() + timedelta(days = -datetime.now().weekday())
+
+        weekly_hours = self._releases[["productCode", "effective_date", "estimated_hours"]]
+
+        # Convert effective date to effective weeks
+        weekly_hours["effective_week"] = weekly_hours.apply(self.__effective_week, axis=1)
+        weekly_hours.drop(["effective_date"], axis=1, inplace=True)
+
+        # Group by product code, then weeks
+        weekly_hours = weekly_hours.groupby(["productCode", pd.Grouper(key="effective_week", freq="W")])["estimated_hours"].sum()
+        weekly_hours = weekly_hours.reset_index()   # Makes sure that records always contain all columns
+
+
+
+        return weekly_hours.to_json(orient="records")
 
     @staticmethod
     def __effective_date(row):
@@ -121,3 +139,7 @@ class CTL:
             date += timedelta(days=10)
 
         return date
+
+    @staticmethod
+    def __effective_week(row):
+        return row["effective_date"].replace(tzinfo=None) - pd.to_timedelta(7, unit="d")
