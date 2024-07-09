@@ -47,7 +47,7 @@ function CTL({ gridRef }) {
     {
       field: "customerCode",
       headerName: "Cust. Code",
-      width: 125,
+      width: 100,
       filter: "agSetColumnFilter",
       sortIndex: 2,
       sort: "asc",
@@ -55,7 +55,7 @@ function CTL({ gridRef }) {
     {
       field: "partDescription",
       headerName: "Part Desc.",
-      width: 535,
+      minWidth: 535,
       filter: "agSetColumnFilter",
     },
     {
@@ -89,7 +89,7 @@ function CTL({ gridRef }) {
     {
       field: "weeks_left",
       headerName: "Weeks",
-      width: 90,
+      width: 80,
       valueFormatter: (row) => {
         // Don't attempt to round string values
         if (typeof row.value === "number") {
@@ -102,7 +102,7 @@ function CTL({ gridRef }) {
     {
       field: "comments",
       headerName: "Comments",
-      width: 150,
+      minWidth: 180,
       filter: "agTextColumnFilter",
     },
     {
