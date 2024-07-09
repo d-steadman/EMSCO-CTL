@@ -55,6 +55,7 @@ function CTL({ gridRef }) {
     {
       field: "partDescription",
       headerName: "Part Desc.",
+      flex: 2,
       minWidth: 535,
       filter: "agSetColumnFilter",
     },
@@ -102,6 +103,7 @@ function CTL({ gridRef }) {
     {
       field: "comments",
       headerName: "Comments",
+      flex: 1,
       minWidth: 180,
       filter: "agTextColumnFilter",
     },
