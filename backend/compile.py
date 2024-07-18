@@ -120,7 +120,14 @@ class CTL:
         weekly_hours = weekly_hours.groupby(["productCode", pd.Grouper(key="effective_week", freq="W")])["estimated_hours"].sum()
         weekly_hours = weekly_hours.reset_index()   # Makes sure that records always contain all columns
 
+        # Limit to the next 4 weeks
+        weekly_hours = weekly_hours[weekly_hours["effective_week"] == "2024-07-07"]
 
+        # Pivot DataFrame so product codes are columns
+        weekly_hours = weekly_hours.pivot(index="effective_week", columns="productCode", values="estimated_hours")
+        weekly_hours = weekly_hours.reset_index()
+
+        print(weekly_hours)
 
         return weekly_hours.to_json(orient="records")
 

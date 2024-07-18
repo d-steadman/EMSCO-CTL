@@ -1,3 +1,4 @@
+import os
 import requests
 
 # URLs
@@ -5,10 +6,11 @@ JB2_API = "https://jb2.emsco-inc.com/jobboss2/api/v1/";
 JB2_REGISTER = JB2_API + "register";
 JB2_LOGIN = JB2_API + "login";
 
+
 # API credentials
-API_KEY = "E67E4E46-16B8-4C32-8B4D-2294C1EA6640";
-USERNAME = "API";
-PASSWORD = "EMSCO123";
+API_KEY = os.environ.get("API_KEY");
+USERNAME = os.environ.get("API_USERNAME");
+PASSWORD = os.environ.get("API_PASSWORD");
 
 def get_auth_token(session):
     """
