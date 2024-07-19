@@ -32,34 +32,6 @@ export const NOT_SELECTED_STYLES = {
   Engineering: "btn bg-white border-2 border-violet-700 text-violet-700",
 };
 
-function notCompleted(prodCodes) {
-  /* Used to filter completed Kanban items out of CTL pages */
-
-  return {
-    comments: {
-      filterType: "text",
-      operator: "OR",
-      conditions: [
-        {
-          filterType: "text",
-          type: "notContains",
-          filter: "KANBAN",
-        },
-        {
-          filterType: "text",
-          type: "contains",
-          filter: "LPRD",
-        },
-      ],
-    },
-
-    productCode: {
-      filterType: "set",
-      values: prodCodes,
-    },
-  };
-}
-
 export default function LandingPage() {
   const [page, setPage] = useState("ALL");
   const [loggedIn, setLoggedIn] = useState(false);

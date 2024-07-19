@@ -1,6 +1,34 @@
 import { useCallback } from "react";
 import { NOT_SELECTED_STYLES, SELECTED_STYLES } from "./LandingPage";
 
+function notCompleted(prodCodes) {
+  /* Used to filter completed Kanban items out of CTL pages */
+
+  return {
+    comments: {
+      filterType: "text",
+      operator: "OR",
+      conditions: [
+        {
+          filterType: "text",
+          type: "notContains",
+          filter: "KANBAN",
+        },
+        {
+          filterType: "text",
+          type: "contains",
+          filter: "LPRD",
+        },
+      ],
+    },
+
+    productCode: {
+      filterType: "set",
+      values: prodCodes,
+    },
+  };
+}
+
 export default function Footer({ page, setPage, gridRef }) {
   // Filtering states for "page" buttons
   const onKanbanComplete = useCallback(() => {
