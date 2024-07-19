@@ -50,11 +50,14 @@ def weekly_hours():
 def note():
     current_user = get_jwt_identity()
 
-    print(notes_db.getall())
-
     unique_id = str(request.json.get("uniqueID"))
-    new_value = str(request.json.get("value"))
-    notes_db.set(unique_id, new_value)
+    new_value = request.json.get("value")
+
+    if new_value:
+        notes_db.set(unique_id, str(new_value))
+
+    else:
+        notes_db.rem(unique_id)
 
     return {}, 200
 
