@@ -29,9 +29,9 @@ def login():
 
 @app.route("/api/ctl")
 def ctl():
-    ctl = CTL(notes_db)
+    ctl = CTL()
 
-    return ctl.ctl
+    return ctl.ctl(notes_db)
 
 @app.route("/api/official-kanban")
 def official_kanban():

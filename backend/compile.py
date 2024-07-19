@@ -29,9 +29,8 @@ ESTIMATES_URL = JB2_API + "estimates" + QUALIFIERS + FIELDS
 
 
 class CTL:
-    def __init__(self, notes_db):
+    def __init__(self):
         self.__session = requests.Session()
-        self.__notes_db = notes_db
 
         # Get & set authentication headers
         self.__auth_token = get_auth_token(self.__session)
@@ -100,11 +99,15 @@ class CTL:
                                            (self._releases["quantityOrdered"] + \
                                             self._releases["quantityToStock"])
 
-        # Compile Notes column from DB entries
-        self._releases["notes"] = self._releases.apply(self.__get_note, axis=1)
+    def ctl(self, notes_db):
+        def get_note(row):
+            if ((note := notes_db.get(str(row["uniqueID"]))) is False):
+                return ""
 
-    @property
-    def ctl(self):
+            return note
+
+        # Compile Notes column from DB entries
+        self._releases["notes"] = self._releases.apply(get_note, axis=1)
         return self._releases.to_json(orient="records")
 
     @property
@@ -155,9 +158,3 @@ class CTL:
     @staticmethod
     def __effective_week(row):
         return row["effective_date"].replace(tzinfo=None) - pd.to_timedelta(7, unit="d")
-
-    def __get_note(self, row):
-        if ((note := self.__notes_db.get(str(row["uniqueID"]))) is False):
-            return ""
-
-        return note

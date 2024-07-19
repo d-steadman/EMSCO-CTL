@@ -39,6 +39,9 @@ export default function Login({ loggedIn, setLoggedIn, gridRef }) {
         type="password"
         className="px-2.5 py-1.5 rounded-l-full border text-xl"
         placeholder="Password"
+        onKeyDown={(event) => {
+          event.key == "Enter" ? handleLogin() : null;
+        }}
       />
       <button
         className="px-2.5 py-1.5 bg-black text-xl text-white font-semibold border border-black rounded-r-full"
