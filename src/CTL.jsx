@@ -15,9 +15,8 @@ import "ag-grid-charts-enterprise";
 import "./ag-grid-theme-custom.css";
 import "./output.css"; // Tailwind output
 
-function CTL({ gridRef }) {
-  const [rowData, setRowData] = useState();
-  const [colDefs, setColDefs] = useState([
+export function getColDefs(loggedIn) {
+  return [
     {
       field: "priority",
       headerName: "Priority",
@@ -58,6 +57,13 @@ function CTL({ gridRef }) {
       flex: 2,
       minWidth: 535,
       filter: "agSetColumnFilter",
+    },
+    {
+      field: "notes",
+      cellDataType: "text",
+      headerName: "Notes",
+      editable: loggedIn,
+      cellClass: "text-red-600",
     },
     {
       field: "quantity",
@@ -130,7 +136,12 @@ function CTL({ gridRef }) {
       width: 135,
       filter: "agSetColumnFilter",
     },
-  ]);
+  ];
+}
+
+function CTL({ gridRef, loggedIn }) {
+  const [rowData, setRowData] = useState();
+  const [colDefs, setColDefs] = useState(getColDefs());
 
   const defaultColDef = useMemo(() => {
     return {
@@ -179,6 +190,22 @@ function CTL({ gridRef }) {
     }
   };
 
+  const pushNote = async (row) => {
+    const token = sessionStorage.getItem("jwt");
+
+    await fetch("/api/note", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        uniqueID: row.data.uniqueID,
+        value: row.newValue,
+      }),
+    });
+  };
+
   const sideBar = useMemo(() => {
     return {
       toolPanels: [
@@ -217,6 +244,7 @@ function CTL({ gridRef }) {
       columnDefs={colDefs}
       defaultColDef={defaultColDef}
       enableRangeSelection={true}
+      onCellValueChanged={pushNote}
       sideBar={sideBar}
       rowGroupPanelShow={"never"}
       pivotPanelShow={"never"}

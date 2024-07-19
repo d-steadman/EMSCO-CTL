@@ -2,6 +2,7 @@ import asyncio
 from datetime import datetime, timedelta
 import pandas as pd
 from pandas.api.types import is_number
+import pickledb
 import numpy as np
 import requests
 from time import time
@@ -10,7 +11,7 @@ from jb2 import JB2_API, get_auth_token, paginator
 
 # Table requests
 QUALIFIERS = "?jobNumber[ne]=&deliveryTicketNumber="
-FIELDS = "&fields=jobNumber,orderNumber,partNumber,partDescription,quantity,dueDate,comments"
+FIELDS = "&fields=uniqueID,jobNumber,orderNumber,partNumber,partDescription,quantity,dueDate,comments"
 RELEASES_URL = JB2_API + "releases" + QUALIFIERS + FIELDS
 
 # &fields=
@@ -28,8 +29,9 @@ ESTIMATES_URL = JB2_API + "estimates" + QUALIFIERS + FIELDS
 
 
 class CTL:
-    def __init__(self):
+    def __init__(self, notes_db):
         self.__session = requests.Session()
+        self.__notes_db = notes_db
 
         # Get & set authentication headers
         self.__auth_token = get_auth_token(self.__session)
@@ -98,6 +100,9 @@ class CTL:
                                            (self._releases["quantityOrdered"] + \
                                             self._releases["quantityToStock"])
 
+        # Compile Notes column from DB entries
+        self._releases["notes"] = self._releases.apply(self.__get_note, axis=1)
+
     @property
     def ctl(self):
         return self._releases.to_json(orient="records")
@@ -150,3 +155,9 @@ class CTL:
     @staticmethod
     def __effective_week(row):
         return row["effective_date"].replace(tzinfo=None) - pd.to_timedelta(7, unit="d")
+
+    def __get_note(self, row):
+        if ((note := self.__notes_db.get(str(row["uniqueID"]))) is False):
+            return ""
+
+        return note
