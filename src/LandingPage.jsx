@@ -35,6 +35,7 @@ export const NOT_SELECTED_STYLES = {
 export default function LandingPage() {
   const [page, setPage] = useState("ALL");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState("");
   const gridRef = useRef();
 
   return (
@@ -43,11 +44,16 @@ export default function LandingPage() {
         page={page}
         loggedIn={loggedIn}
         setLoggedIn={setLoggedIn}
+        lastUpdated={lastUpdated}
         gridRef={gridRef}
       />
 
       <div className="ag-theme-custom tracking-tighter h-full">
-        <CTL gridRef={gridRef} loggedIn={loggedIn} />
+        <CTL
+          gridRef={gridRef}
+          loggedIn={loggedIn}
+          setLastUpdated={setLastUpdated}
+        />
       </div>
 
       <Footer page={page} setPage={setPage} gridRef={gridRef} />

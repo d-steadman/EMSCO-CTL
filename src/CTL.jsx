@@ -1,13 +1,6 @@
 "use strict";
 
-import {
-  addDays,
-  subDays,
-  addWeeks,
-  format,
-  parseISO,
-  startOfDay,
-} from "date-fns";
+import { format, parseISO } from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-charts-enterprise";
@@ -139,7 +132,7 @@ export function getColDefs(loggedIn) {
   ];
 }
 
-function CTL({ gridRef, loggedIn }) {
+function CTL({ gridRef, loggedIn, setLastUpdated }) {
   const [rowData, setRowData] = useState();
   const [colDefs, setColDefs] = useState(getColDefs());
 
@@ -227,11 +220,24 @@ function CTL({ gridRef, loggedIn }) {
     };
   }, []);
   const onGridReady = useEffect(() => {
-    fetch("/api/ctl")
-      .then((res) => res.json())
-      .then((json) => {
-        setRowData(json);
-      });
+    const fetchData = async () => {
+      fetch("/api/ctl")
+        .then((res) => res.json())
+        .then((json) => {
+          setRowData(json);
+        });
+
+      // Change lastUpdated time
+      setLastUpdated(format(new Date(), "h:mm b"));
+    };
+
+    fetchData(); // Fetch initial data
+
+    const intervalId = setInterval(() => {
+      fetchData(); // Fetch data every 2 minutes
+    }, 300000);
+
+    return () => clearInterval(intervalId); // Clean-up interval on exit
   }, []);
 
   return (

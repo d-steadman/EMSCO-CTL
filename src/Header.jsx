@@ -2,7 +2,13 @@ import { Link } from "react-router-dom";
 import { SELECTED_STYLES } from "./LandingPage";
 import Login from "./Login";
 
-export default function Header({ page, loggedIn, setLoggedIn, gridRef }) {
+export default function Header({
+  page,
+  loggedIn,
+  setLoggedIn,
+  gridRef,
+  lastUpdated,
+}) {
   let pageElement;
   switch (page) {
     case "Kanban Complete":
@@ -57,19 +63,33 @@ export default function Header({ page, loggedIn, setLoggedIn, gridRef }) {
   }
 
   return (
-    <div className="m-4 flex justify-between items-center">
-      <Login loggedIn={loggedIn} setLoggedIn={setLoggedIn} gridRef={gridRef} />
-      <div className="flex justify-end mr-4 self-center">{pageElement}</div>
+    <div>
+      <div className="mx-4 mt-4 flex justify-between items-center">
+        <Login
+          loggedIn={loggedIn}
+          setLoggedIn={setLoggedIn}
+          gridRef={gridRef}
+        />
+        <div className="flex justify-end mr-4 self-center">{pageElement}</div>
 
-      <div className="shrink-0 justify-self-center text-center text-4xl font-black">
-        <h1>Cycle Time List</h1>
+        <div className="shrink-0 justify-self-center text-center text-4xl font-black">
+          <h1>Cycle Time List</h1>
+        </div>
+
+        {/* Keeps title centered */}
+        <div className="flex justify-end flex-1 self-center">
+          <Link
+            to="/official-kanban"
+            className="btn bg-black text-xl text-white"
+          >
+            Official Kanban &rsaquo;
+          </Link>
+        </div>
       </div>
-
-      {/* Keeps title centered */}
-      <div className="flex justify-end flex-1 self-center">
-        <Link to="/official-kanban" className="btn bg-black text-xl text-white">
-          Official Kanban &rsaquo;
-        </Link>
+      <div>
+        <h2 className="mt-2 mb-4 flex place-content-center">
+          Last Updated: {lastUpdated}
+        </h2>
       </div>
     </div>
   );
