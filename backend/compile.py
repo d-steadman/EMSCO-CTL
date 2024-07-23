@@ -104,8 +104,6 @@ class CTL:
             if ((note := notes_db.get(str(row["uniqueID"]))) is False):
                 return ""
 
-            print(note)
-
             return note
 
         # Compile Notes column from DB entries

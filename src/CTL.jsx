@@ -16,8 +16,15 @@ export function getColDefs(loggedIn) {
       hide: true,
       sortIndex: 1,
       sort: "asc",
+      filter: "agNumberColumnFilter",
     },
-    { field: "PONumber", headerName: "PO #", hide: true, width: 100 },
+    {
+      field: "PONumber",
+      headerName: "PO #",
+      hide: true,
+      width: 100,
+      filter: "agSetColumnFilter",
+    },
     {
       field: "jobNumber",
       headerName: "Job #",
@@ -49,7 +56,7 @@ export function getColDefs(loggedIn) {
       headerName: "Part Desc.",
       flex: 2,
       minWidth: 535,
-      filter: "agSetColumnFilter",
+      filter: "agTextColumnFilter",
     },
     {
       field: "notes",
@@ -57,12 +64,14 @@ export function getColDefs(loggedIn) {
       headerName: "Notes",
       editable: loggedIn,
       cellClass: "text-red-600",
+      filter: "agTextColumnFilter",
     },
     {
       field: "quantity",
       headerName: "Qty",
       cellClass: "text-right",
       width: 60,
+      filter: "agNumberColumnFilter",
     },
     {
       field: "dueDate",
@@ -74,6 +83,7 @@ export function getColDefs(loggedIn) {
       valueFormatter: (row) => {
         return format(row.value, "MM-dd-yy");
       },
+      filter: "agDateColumnFilter",
     },
     {
       cellDataType: "date",
@@ -85,6 +95,7 @@ export function getColDefs(loggedIn) {
       },
       sortIndex: 0,
       sort: "asc",
+      filter: "agDateColumnFilter",
     },
     {
       field: "weeks_left",
@@ -98,6 +109,7 @@ export function getColDefs(loggedIn) {
 
         return row.value;
       },
+      filter: "agNumberColumnFilter",
     },
     {
       field: "comments",
@@ -117,17 +129,25 @@ export function getColDefs(loggedIn) {
       headerName: "Est. Hrs.",
       width: 65,
       valueFormatter: (row) => row.value.toFixed(1),
+      filter: "agNumberColumnFilter",
     },
     {
       field: "location",
       headerName: "Location",
       width: 115,
+      filter: "agSetColumnFilter",
     },
     {
       field: "productCode",
       headerName: "Prod. Code",
       width: 135,
       filter: "agSetColumnFilter",
+    },
+    {
+      field: "notesToCustomer",
+      headerName: "Notes to Customer",
+      hide: true,
+      filter: "agTextColumnFilter",
     },
   ];
 }
@@ -219,6 +239,7 @@ function CTL({ gridRef, loggedIn, setLastUpdated }) {
       ],
     };
   }, []);
+
   const onGridReady = useEffect(() => {
     const fetchData = async () => {
       fetch("/api/ctl")
@@ -228,13 +249,13 @@ function CTL({ gridRef, loggedIn, setLastUpdated }) {
         });
 
       // Change lastUpdated time
-      setLastUpdated(format(new Date(), "h:mm b"));
+      setLastUpdated(format(new Date(), "h:mm a")); // 12:59 PM
     };
 
     fetchData(); // Fetch initial data
 
     const intervalId = setInterval(() => {
-      fetchData(); // Fetch data every 2 minutes
+      fetchData(); // Fetch data every 5 minutes
     }, 300000);
 
     return () => clearInterval(intervalId); // Clean-up interval on exit

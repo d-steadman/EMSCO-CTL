@@ -220,6 +220,8 @@ export default function Footer({ page, setPage, gridRef }) {
       >
         Engineering
       </button>
+
+      <button className="btn justify-self-end ml-auto">FAQ</button>
     </div>
   );
 }
