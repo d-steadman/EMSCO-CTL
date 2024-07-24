@@ -215,6 +215,13 @@ function CTL({ gridRef, rowData, loggedIn, fetchData }) {
         uniqueID: row.data.uniqueID,
         value: row.newValue,
       }),
+    }).then((res) => {
+      if (!res.ok) {
+        alert(
+          "Could not process note. Refresh page, re-login, then try again.",
+        );
+        console.log(res);
+      }
     });
   };
 
