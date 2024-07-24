@@ -8,6 +8,7 @@ export default function Header({
   setLoggedIn,
   gridRef,
   lastUpdated,
+  fetchData,
 }) {
   let pageElement;
   switch (page) {
@@ -86,10 +87,11 @@ export default function Header({
           </Link>
         </div>
       </div>
-      <div>
-        <h2 className="mt-2 mb-4 flex place-content-center">
-          Last Updated: {lastUpdated}
-        </h2>
+      <div className="mt-2 mb-4 flex flex-row justify-center items-center space-x-4">
+        <h2 className="">Last Updated: {lastUpdated}</h2>
+        <button className="btn bg-black text-white" onClick={fetchData}>
+          Refresh Data
+        </button>
       </div>
     </div>
   );

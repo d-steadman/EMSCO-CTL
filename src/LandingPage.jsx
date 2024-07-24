@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { useCallback, useRef, useState } from "react";
 
 import "./ag-grid-theme-custom.css";
@@ -34,9 +35,21 @@ export const NOT_SELECTED_STYLES = {
 
 export default function LandingPage() {
   const [page, setPage] = useState("ALL");
+  const [rowData, setRowData] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
   const [lastUpdated, setLastUpdated] = useState("");
   const gridRef = useRef();
+
+  const fetchData = async () => {
+    fetch("/api/ctl")
+      .then((res) => res.json())
+      .then((json) => {
+        setRowData(json);
+      });
+
+    // Change lastUpdated time
+    setLastUpdated(format(new Date(), "h:mm a")); // 1:59 PM
+  };
 
   return (
     <div className="h-screen flex flex-col justify-between">
@@ -46,13 +59,15 @@ export default function LandingPage() {
         setLoggedIn={setLoggedIn}
         lastUpdated={lastUpdated}
         gridRef={gridRef}
+        fetchData={fetchData}
       />
 
       <div className="ag-theme-custom tracking-tighter h-full">
         <CTL
           gridRef={gridRef}
+          rowData={rowData}
           loggedIn={loggedIn}
-          setLastUpdated={setLastUpdated}
+          fetchData={fetchData}
         />
       </div>
 

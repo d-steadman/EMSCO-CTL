@@ -6,4 +6,8 @@
     .btn {
         @apply px-2.5 py-1.5 rounded-full font-semibold;
     }
+
+    .btn-small {
+        @apply py-0 rounded-full font-semibold;
+    }
 }

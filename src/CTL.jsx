@@ -152,8 +152,7 @@ export function getColDefs(loggedIn) {
   ];
 }
 
-function CTL({ gridRef, loggedIn, setLastUpdated }) {
-  const [rowData, setRowData] = useState();
+function CTL({ gridRef, rowData, loggedIn, fetchData }) {
   const [colDefs, setColDefs] = useState(getColDefs());
 
   const defaultColDef = useMemo(() => {
@@ -241,17 +240,6 @@ function CTL({ gridRef, loggedIn, setLastUpdated }) {
   }, []);
 
   const onGridReady = useEffect(() => {
-    const fetchData = async () => {
-      fetch("/api/ctl")
-        .then((res) => res.json())
-        .then((json) => {
-          setRowData(json);
-        });
-
-      // Change lastUpdated time
-      setLastUpdated(format(new Date(), "h:mm a")); // 12:59 PM
-    };
-
     fetchData(); // Fetch initial data
 
     const intervalId = setInterval(() => {
