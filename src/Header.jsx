@@ -77,7 +77,40 @@ export default function Header({
         </div>
 
         {/* Keeps title centered */}
-        <div className="flex justify-end flex-1 self-center"></div>
+        <div className="flex justify-end flex-1 self-center">
+          <button
+            className="btn bg-black text-xl text-white"
+            onClick={() => {
+              // Renders full grid so all of it can be printed
+              gridRef.current.api.setGridOption("domLayout", "print");
+
+              // Set width of flex columns so they fit in print area
+              gridRef.current.api.applyColumnState({
+                state: [
+                  { colId: "partDescription", width: 550 },
+                  { colId: "comments", width: 180 },
+                ],
+              });
+
+              // Allow time for printing to process
+              setTimeout(() => {
+                print();
+
+                // Remove set width and restore flex property
+                gridRef.current.api.applyColumnState({
+                  state: [
+                    { colId: "partDescription", flex: 2, width: null },
+                    { colId: "comments", flex: 1, width: null },
+                  ],
+                });
+
+                gridRef.current.api.setGridOption("domLayout", undefined);
+              }, 2000);
+            }}
+          >
+            Print
+          </button>
+        </div>
       </div>
       <div className="mt-2 mb-4 flex flex-row justify-center items-center space-x-4">
         <h2 className="">Last Updated: {lastUpdated}</h2>

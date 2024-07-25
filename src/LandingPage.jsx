@@ -62,7 +62,7 @@ export default function LandingPage() {
         fetchData={fetchData}
       />
 
-      <div className="ag-theme-custom tracking-tighter h-full">
+      <div className="ag-theme-custom tracking-tighter h-full w-full">
         <CTL
           gridRef={gridRef}
           rowData={rowData}

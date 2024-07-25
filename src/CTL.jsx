@@ -116,6 +116,7 @@ export function getColDefs(loggedIn) {
       headerName: "Comments",
       flex: 1,
       minWidth: 180,
+      maxWidth: 180,
       filter: "agTextColumnFilter",
     },
     {
