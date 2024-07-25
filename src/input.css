@@ -14,7 +14,6 @@
 
 @media print {
     /* All your print styles go here */
-    header,
     footer,
     .ag-side-bar {
         display: none !important;

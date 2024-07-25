@@ -28,11 +28,11 @@ export default function Login({ loggedIn, setLoggedIn, gridRef }) {
   });
 
   return loggedIn ? (
-    <div className="flex-1">
+    <div id="login" className="flex-1">
       <span className="btn bg-green-600 text-white text-xl">Logged In</span>
     </div>
   ) : (
-    <div className="flex flex-1 m-0">
+    <div id="login" className="flex flex-1 m-0">
       <input
         ref={inputRef}
         name="password"
