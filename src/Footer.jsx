@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { Link } from "react-router-dom";
 import { NOT_SELECTED_STYLES, SELECTED_STYLES } from "./LandingPage";
 
 function notCompleted(prodCodes) {
@@ -121,7 +122,7 @@ export default function Footer({ page, setPage, gridRef }) {
   }, []);
 
   return (
-    <div className="flex flex-row px-4 py-2 space-x-2.5">
+    <div className="flex flex-row px-4 py-2 space-x-2.5 items-center">
       <button
         onClick={onKanbanComplete}
         className={
@@ -221,7 +222,16 @@ export default function Footer({ page, setPage, gridRef }) {
         Engineering
       </button>
 
-      <button className="btn justify-self-end ml-auto">FAQ</button>
+      <button className="btn bg-black text-white border-2 border-black">
+        FAQ
+      </button>
+
+      <Link
+        to="/official-kanban"
+        className="btn bg-black text-white border-2 border-black"
+      >
+        Official Kanban
+      </Link>
     </div>
   );
 }

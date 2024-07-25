@@ -159,6 +159,9 @@ function CTL({ gridRef, rowData, loggedIn, fetchData }) {
     return {
       menuTabs: ["filterMenuTab"],
       enableValue: true,
+      filterParams: {
+        buttons: ["clear", "apply"],
+      },
     };
   }, []);
 

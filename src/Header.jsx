@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { SELECTED_STYLES } from "./LandingPage";
 import Login from "./Login";
 
@@ -78,14 +77,7 @@ export default function Header({
         </div>
 
         {/* Keeps title centered */}
-        <div className="flex justify-end flex-1 self-center">
-          <Link
-            to="/official-kanban"
-            className="btn bg-black text-xl text-white"
-          >
-            Official Kanban &rsaquo;
-          </Link>
-        </div>
+        <div className="flex justify-end flex-1 self-center"></div>
       </div>
       <div className="mt-2 mb-4 flex flex-row justify-center items-center space-x-4">
         <h2 className="">Last Updated: {lastUpdated}</h2>
