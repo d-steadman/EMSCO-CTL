@@ -11,3 +11,12 @@
         @apply py-0 rounded-full font-semibold;
     }
 }
+
+@media print {
+    /* All your print styles go here */
+    header,
+    footer,
+    .ag-side-bar {
+        display: none !important;
+    }
+}

@@ -63,7 +63,7 @@ export default function Header({
   }
 
   return (
-    <div>
+    <header>
       <div className="mx-4 mt-4 flex justify-between items-center">
         <Login
           loggedIn={loggedIn}
@@ -118,6 +118,6 @@ export default function Header({
           Refresh Data
         </button>
       </div>
-    </div>
+    </header>
   );
 }
