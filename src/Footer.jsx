@@ -68,7 +68,12 @@ export default function Footer({ page, setPage, gridRef }) {
 
     gridRef.current.api.resetColumnState();
     gridRef.current.api.setFilterModel(
-      notCompleted(["PROD-HNS-STD", "PROD-HNS-TNY", "PROD-MULTI"]),
+      notCompleted([
+        "PROD-HNS-STD",
+        "PROD-HNS-TNY",
+        "PROD-MULTI",
+        "PROD-RIBBON",
+      ]),
     );
   }, []);
 
